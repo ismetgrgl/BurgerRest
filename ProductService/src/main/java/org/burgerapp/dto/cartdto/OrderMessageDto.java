@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class OrderMessageDto {
     private Long cartId;
-    private Long userId;
+    private Long authId;
     private Double totalPrice;
 
     // Getters and Setters

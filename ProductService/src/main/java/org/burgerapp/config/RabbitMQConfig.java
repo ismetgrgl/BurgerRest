@@ -20,6 +20,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue paymentQueue() {
+        return new Queue("queue.burgerrest.order.payment", true);
+    }
+
+    @Bean
     public DirectExchange exchange() {
         return new DirectExchange("exchange.burgerrest");
     }
@@ -27,6 +32,11 @@ public class RabbitMQConfig {
     @Bean
     public Binding orderBinding(Queue orderQueue, DirectExchange exchange) {
         return BindingBuilder.bind(orderQueue).to(exchange).with("routing.key.order");
+    }
+
+    @Bean
+    public Binding paymentBinding(Queue paymentQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(paymentQueue).to(exchange).with("routing.key.order.payment");
     }
 
     @Bean

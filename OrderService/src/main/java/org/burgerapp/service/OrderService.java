@@ -16,16 +16,14 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
 
-    @RabbitListener(queues = "queue.burgerrest.order")
-    public void handleOrderMessage(OrderMessageDto orderMessageDto) {
-        // Siparişi oluştur
+    @RabbitListener(queues = "queue.burgerrest.order.payment")
+    public void handleOrderPaymentMessage(OrderMessageDto orderMessageDto) {
         Order order = new Order();
         order.setCartId(orderMessageDto.getCartId());
-        order.setUserId(orderMessageDto.getUserId());
+        order.setAuthId(orderMessageDto.getAuthId());  // Kullanıcı kimliği olarak authId'yi kullanıyoruz
         order.setTotalPrice(orderMessageDto.getTotalPrice());
         order.setDescription("Order created");
 
-        // Siparişi veritabanına kaydet
         orderRepository.save(order);
     }
 

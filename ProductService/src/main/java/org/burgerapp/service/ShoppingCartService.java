@@ -102,11 +102,17 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
-    public void checkout(Long cartId, Long userId) {
+    public void checkout(Long cartId) {
+        ShoppingCart cart = shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new ProductServiceException(ErrorType.CART_NOT_FOUND));
+
+        Long authId = cart.getAuthId();
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(cartId).orElseThrow(() -> new ProductServiceException(ErrorType.CART_NOT_FOUND));
+
         OrderMessageDto orderMessage = new OrderMessageDto();
         orderMessage.setCartId(cartId);
-        orderMessage.setUserId(userId);
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(cartId).orElseThrow(() -> new ProductServiceException(ErrorType.CART_NOT_FOUND));
+        orderMessage.setAuthId(authId);
         orderMessage.setTotalPrice(shoppingCart.getTotalPrice());
 
         try {

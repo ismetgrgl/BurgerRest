@@ -27,8 +27,8 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<Void> checkout(@RequestParam Long cartId, @RequestParam Long userId) {
-        shoppingCartService.checkout(cartId , userId );
+    public ResponseEntity<Void> checkout(@RequestParam Long cartId) {
+        shoppingCartService.checkout(cartId);
         return ResponseEntity.ok().build();
     }
 }

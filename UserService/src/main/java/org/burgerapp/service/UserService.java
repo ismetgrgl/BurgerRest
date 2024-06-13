@@ -2,6 +2,7 @@ package org.burgerapp.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.apache.hc.core5.http.Message;
 import org.burgerapp.dto.request.OrderMessageDto;
 import org.burgerapp.dto.request.UserSaveRequestDto;
 import org.burgerapp.dto.request.UserUpdateRequestDto;
@@ -12,7 +13,9 @@ import org.burgerapp.exception.UserServiceException;
 import org.burgerapp.mapper.UserMapper;
 import org.burgerapp.repository.UserRepository;
 import org.burgerapp.utility.JwtTokenManager;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 private final UserRepository userRepository;
 private final JwtTokenManager jwtTokenManager;
+private final RabbitTemplate rabbitTemplate;
 
     public Boolean save(UserSaveRequestDto dto) {
         UserProfile save = userRepository.save(UserMapper.INSTANCE.toUserProfile(dto));
@@ -74,23 +78,34 @@ private final JwtTokenManager jwtTokenManager;
     }
 
     @RabbitListener(queues = "queue.burgerrest.order")
-    public void handleOrderMessage(OrderMessageDto orderMessageDto) {
-        Long userId = orderMessageDto.getUserId();
+    public void handleOrderMessage(OrderMessageDto orderMessageDto, Message message) {
+        Long authId = orderMessageDto.getAuthId();
         Double totalPrice = orderMessageDto.getTotalPrice();
 
-        // Kullanıcı bilgilerini al
-        UserProfile user = userRepository.findById(userId).orElseThrow(() -> new UserServiceException(ErrorType.USER_NOT_FOUND));
+        UserProfile user = userRepository.findByAuthId(authId)
+                .orElseThrow(() -> new UserServiceException(ErrorType.USER_NOT_FOUND));
 
-        // Kullanıcı bakiyesini güncelle
         if (user.getBalance() < totalPrice) {
-            throw new UserServiceException(ErrorType.INTERNAL_SERVER_ERROR);
+            // Kullanıcının bakiyesi yetersiz ise istisna fırlat
+            throw new UserServiceException(ErrorType.BAD_REQUEST_ERROR);
         }
-        user.setBalance(user.getBalance() - totalPrice);
-        userRepository.save(user);
-    }
-    public UserProfile findByAuthId(Long authId) {
-        return userRepository.findByAuthId(authId)
-               .orElseThrow(() -> new UserServiceException(ErrorType.USER_NOT_FOUND));
-    }
 
+        try {
+            // Balance yeterliyse, bakiyeyi düş ve siparişi işle
+            user.setBalance(user.getBalance() - totalPrice);
+            userRepository.save(user);
+
+            // Order bilgilerini sipariş servisine ilet
+            OrderMessageDto newOrderMessage = new OrderMessageDto();
+            newOrderMessage.setCartId(orderMessageDto.getCartId());
+            newOrderMessage.setAuthId(authId);
+            newOrderMessage.setTotalPrice(0.0);
+
+            rabbitTemplate.convertAndSend("exchange.burgerrest", "routing.key.order.payment", newOrderMessage);
+        } catch (Exception e) {
+            // İşlem sırasında bir hata oluşursa, mesajı yeniden kuyruğa gönder
+            // Bu şekilde RabbitMQ, mesajı tekrar işlemeye çalışabilir
+            throw new AmqpRejectAndDontRequeueException(e);
+        }
+    }
 }

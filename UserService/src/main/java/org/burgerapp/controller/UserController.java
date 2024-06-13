@@ -32,10 +32,6 @@ private final UserService userService;
         return ResponseEntity.ok("User updated");
     }
 
-    @GetMapping("/balance/{authId}")
-    public ResponseEntity<Double> getUserBalance(@PathVariable Long authId) {
-        UserProfile userProfile = userService.findByAuthId(authId);
-        return ResponseEntity.ok(userProfile.getBalance());
-    }
+
 
 }
