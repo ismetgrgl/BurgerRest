@@ -1,0 +1,19 @@
+server:
+  port: 9095
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ismetmustafa068@gmail.com
+    password: pcse zydq fbwh zwbj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: java14user
+    password: root

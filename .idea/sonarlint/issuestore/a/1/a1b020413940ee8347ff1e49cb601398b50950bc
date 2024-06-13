@@ -1,0 +1,10 @@
+
+p
+java:S5411+"(Use a primitive boolean expression here.(‚Ÿ±ãüÿÿÿÿ8û¢É³€2J$13070228-e956-4c5e-96fd-1368e0d3af22
+
+java:S2229Z"Z"statusControl's" @Transactional requirement is incompatible with the one for this method.(ü´›ñ8£É³€2J$7885d202-3511-47a3-8e3e-7226b494fe35
+r	java:S1069"+Replace this use of System.out by a logger.(Œ”©ˆıÿÿÿÿ8•£É³€2J$da80712f-9478-4456-8ad9-6281d4d1e8fe
+r	java:S106@"+Replace this use of System.out by a logger.(¬Õõ¦øÿÿÿÿ8–£É³€2J$d071723e-b8d6-4d1a-b11a-2ab0dfb144a0
+˜
+java:S6809Z"UCall transactional methods via an injected dependency instead of directly via 'this'.(ü´›ñ8™£É³€2J$148f35ed-5279-4629-88a6-97cca8540a37
+~	java:S125e"<This block of commented-out lines of code should be removed.(§õÂù8›£É³€2J$824d02b9-59dc-4fed-9ee9-8913cf1dc437

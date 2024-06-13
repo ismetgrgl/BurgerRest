@@ -1,0 +1,12 @@
+rootProject.name = 'BurgerRest'
+include 'ConfigServerGit'
+include 'ApiGatewayService'
+include 'EmailService'
+include 'ConfigServer'
+include 'AuthService'
+include 'UserService'
+include 'CategoryService'
+include 'CategoryService'
+include 'ProductService'
+include 'OrderService'
+
