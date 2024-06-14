@@ -65,7 +65,7 @@ public enum ErrorType {
     USERSERVICE_UPDATE_STATUS_FAILED(4002,
             "User Service de Status Update Failed",
             HttpStatus.SERVICE_UNAVAILABLE
-    );
+    ), INSUFFICIENT_BALANCE(5005, "bakiye yeterli değil ", HttpStatus.NOT_FOUND );
     private Integer code;
     private String message;
     private HttpStatus httpStatus;

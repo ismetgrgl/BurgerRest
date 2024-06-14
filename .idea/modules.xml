@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AuthService/BurgerRest.AuthService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AuthService/BurgerRest.AuthService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServer/BurgerRest.ConfigServer.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServer/BurgerRest.ConfigServer.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EmailService/BurgerRest.EmailService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/EmailService/BurgerRest.EmailService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/OrderService/BurgerRest.OrderService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/OrderService/BurgerRest.OrderService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ProductService/BurgerRest.ProductService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ProductService/BurgerRest.ProductService.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/UserService/BurgerRest.UserService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/UserService/BurgerRest.UserService.main.iml" />
     </modules>
   </component>

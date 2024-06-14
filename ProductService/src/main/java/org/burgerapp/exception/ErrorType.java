@@ -59,7 +59,8 @@ public enum ErrorType {
 			HttpStatus.BAD_REQUEST),
 	ACCOUNT_ALREADY_DELETED(3008,
 			"Hesabınız daha önce silinmiş. Silme işlemi gerçekleştirilemez",
-			HttpStatus.BAD_REQUEST), CART_NOT_FOUND(3009,"Kart Bulunamadı" ,HttpStatus.NOT_FOUND);
+			HttpStatus.BAD_REQUEST), CART_NOT_FOUND(3009,"Kart Bulunamadı" ,HttpStatus.NOT_FOUND),
+	CART_OR_ITEM_NOT_FOUND(5009,"sepet veya ürün yok" ,HttpStatus.NOT_FOUND );
 	private Integer code;
 	private String message;
 	private HttpStatus httpStatus;

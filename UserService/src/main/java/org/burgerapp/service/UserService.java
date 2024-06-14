@@ -13,6 +13,9 @@ import org.burgerapp.exception.UserServiceException;
 import org.burgerapp.mapper.UserMapper;
 import org.burgerapp.repository.UserRepository;
 import org.burgerapp.utility.JwtTokenManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +27,7 @@ public class UserService {
 private final UserRepository userRepository;
 private final JwtTokenManager jwtTokenManager;
 private final RabbitTemplate rabbitTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public Boolean save(UserSaveRequestDto dto) {
         UserProfile save = userRepository.save(UserMapper.INSTANCE.toUserProfile(dto));
@@ -78,7 +82,7 @@ private final RabbitTemplate rabbitTemplate;
     }
 
     @RabbitListener(queues = "queue.burgerrest.order")
-    public void handleOrderMessage(OrderMessageDto orderMessageDto, Message message) {
+    public void handleOrderMessage(OrderMessageDto orderMessageDto) {
         Long authId = orderMessageDto.getAuthId();
         Double totalPrice = orderMessageDto.getTotalPrice();
 
@@ -86,26 +90,25 @@ private final RabbitTemplate rabbitTemplate;
                 .orElseThrow(() -> new UserServiceException(ErrorType.USER_NOT_FOUND));
 
         if (user.getBalance() < totalPrice) {
-            // Kullanıcının bakiyesi yetersiz ise istisna fırlat
-            throw new UserServiceException(ErrorType.BAD_REQUEST_ERROR);
+            logger.error("Insufficient balance for user with authId: {}", authId);
+            // Burada mesajı yeniden kuyruğa göndermek yerine sadece hatayı logluyoruz.
+            return;
         }
 
+        // Balance yeterliyse, bakiyeyi düş ve siparişi işle
+        user.setBalance(user.getBalance() - totalPrice);
+        userRepository.save(user);
+
+        // Order bilgilerini sipariş servisine ilet
+        OrderMessageDto newOrderMessage = new OrderMessageDto();
+        newOrderMessage.setCartId(orderMessageDto.getCartId());
+        newOrderMessage.setAuthId(authId);
+        newOrderMessage.setTotalPrice(0.0);
+
         try {
-            // Balance yeterliyse, bakiyeyi düş ve siparişi işle
-            user.setBalance(user.getBalance() - totalPrice);
-            userRepository.save(user);
-
-            // Order bilgilerini sipariş servisine ilet
-            OrderMessageDto newOrderMessage = new OrderMessageDto();
-            newOrderMessage.setCartId(orderMessageDto.getCartId());
-            newOrderMessage.setAuthId(authId);
-            newOrderMessage.setTotalPrice(0.0);
-
             rabbitTemplate.convertAndSend("exchange.burgerrest", "routing.key.order.payment", newOrderMessage);
-        } catch (Exception e) {
-            // İşlem sırasında bir hata oluşursa, mesajı yeniden kuyruğa gönder
-            // Bu şekilde RabbitMQ, mesajı tekrar işlemeye çalışabilir
-            throw new AmqpRejectAndDontRequeueException(e);
+        } catch (AmqpException e) {
+            logger.error("Failed to send message to RabbitMQ", e);
         }
     }
 }

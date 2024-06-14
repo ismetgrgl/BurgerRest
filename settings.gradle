@@ -9,4 +9,5 @@ include 'CategoryService'
 include 'CategoryService'
 include 'ProductService'
 include 'OrderService'
+include 'ApiGatewayService'
 

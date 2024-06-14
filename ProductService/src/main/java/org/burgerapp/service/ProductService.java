@@ -2,6 +2,7 @@ package org.burgerapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.burgerapp.dto.productdto.request.ProductAddItemsDto;
+import org.burgerapp.dto.productdto.request.ProductRemoveItemsDto;
 import org.burgerapp.dto.productdto.request.ProductSaveRequestDto;
 import org.burgerapp.entity.Items;
 import org.burgerapp.entity.Product;
@@ -48,6 +49,33 @@ public class ProductService {
         }
         throw new RuntimeException("Product or Option not found");
     }
+/*
+    public Product removeItemsFromProduct(ProductRemoveItemsDto dto) {
+
+        String roleControl = jwtTokenManager.getRoleFromToken(dto.getToken())
+                .orElseThrow(() -> new ProductServiceException(ErrorType.TOKEN_ARGUMENT_NOTVALID));
+
+        if (!roleControl.equals(ERole.ADMIN.name())) {
+            throw new ProductServiceException(ErrorType.ROLE_CONTROL_FAILED);
+        }
+
+        Optional<Product> productOpt = productRepository.findById(dto.getProductId());
+        Optional<Items> itemsOpt = itemsRepository.findById(dto.getItemsId());
+
+        if (productOpt.isPresent() && itemsOpt.isPresent()) {
+            Product product = productOpt.get();
+            Items items = itemsOpt.get();
+            if (product.getItems().contains(items)) {
+                product.getItems().remove(items);
+                return productRepository.save(product);
+            } else {
+                throw new RuntimeException("Item not found in product");
+            }
+        }
+        throw new RuntimeException("Product or Item not found");
+    }
+
+ */
 
     public Product createProduct(ProductSaveRequestDto dto) {
 
@@ -73,5 +101,7 @@ public class ProductService {
         product.setItems(items);
         return productRepository.save(product);
     }
+
+
 
 }

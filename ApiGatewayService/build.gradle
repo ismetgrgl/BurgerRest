@@ -1,0 +1,5 @@
+dependencies {
+    implementation libs.springCloudConfig
+    implementation libs.springCloudConfigServer
+    implementation libs.springBootActuator
+}

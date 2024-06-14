@@ -16,6 +16,8 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
 
+
+
     @RabbitListener(queues = "queue.burgerrest.order.payment")
     public void handleOrderPaymentMessage(OrderMessageDto orderMessageDto) {
         Order order = new Order();
@@ -25,6 +27,7 @@ public class OrderService {
         order.setDescription("Order created");
 
         orderRepository.save(order);
+
     }
 
     public Order findById(Long id) {

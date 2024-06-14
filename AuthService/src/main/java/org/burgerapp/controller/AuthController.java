@@ -35,7 +35,7 @@ public class AuthController {
     }
 
 
-    @GetMapping(EndPoints.SIFREMIUNUTTUM)
+    @GetMapping("/forgotpassword")
     public ResponseEntity<String> sifremiUnuttum(@RequestParam String email){
         authService.sifremiUnuttum(email);
         return ResponseEntity.ok("Şifrenizi onaylamak için updatePassword bölümüne gidiniz.");
